@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>重生・雙溪鐵道復仇記</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#03060f;color:#fff;overflow-x:hidden}
+body{font-family:"DFKai-SB","標楷體","BiauKai","Kaiti TC","KaiTi","STKaiti",serif;font-size:clamp(24px,6.4vw,32px);line-height:1.8}
+.bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(#070d20,#02040a)}
+.bg:before,.bg:after{content:"";position:absolute;inset:-20%;animation:dr 16s ease-in-out infinite alternate}
+.bg:before{background:radial-gradient(ellipse at 25% 20%,rgba(90,130,230,.38),transparent 55%)}
+.bg:after{background:radial-gradient(ellipse at 80% 82%,rgba(214,160,80,.2),transparent 50%);animation-duration:21s;animation-direction:alternate-reverse}
+@keyframes dr{to{transform:translate(8%,6%) scale(1.15)}}
+.vg{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 170px rgba(0,0,0,.75);z-index:1}
+#st{min-height:100dvh;padding:calc(70px + env(safe-area-inset-top,0px)) 24px 90px;max-width:520px;margin:0 auto;transition:opacity .55s}
+#st.off{opacity:0}
+.tx{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:calc(100dvh - 160px - env(safe-area-inset-top,0px))}
+.ln{display:block;margin:.3em 0;opacity:0;filter:blur(7px);transform:translateY(16px);transition:opacity 1.7s ease,filter 1.7s ease,transform 1.7s ease;text-shadow:0 0 18px rgba(130,165,255,.45)}
+.ln.on{opacity:1;filter:none;transform:none}
+.ttl .ln{font-size:1.2em;letter-spacing:.12em}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;pointer-events:none;padding:20px 22px calc(18px + env(safe-area-inset-bottom,0px));display:flex;justify-content:flex-end}
+.go{font:inherit;color:#fff;background:none;border:0;padding:12px 6px;min-height:56px;letter-spacing:.1em;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 1.2s}
+.go.show{opacity:1;pointer-events:auto;animation:br 2.6s ease-in-out infinite}
+.go:active,.go.show:active{opacity:.6}
+@keyframes br{50%{filter:brightness(1.18)}}
+@media (prefers-reduced-motion:reduce){.ln,#st{transition-duration:.01s}.bg:before,.bg:after{animation:none}}
+</style></head><body><div class="bg"></div><div class="vg"></div><div id="st"></div>
+<script>
+var AU={a:"",b:""}, /* 音檔網址：a=「前世」頁，b=「最好的閨蜜」頁 */
+F=document.getElementById("st"),tk=0,tm,p=0,
+P=[{ttl:1,ps:["重生之","我要拿回屬於我的一切"]},
+{ps:["前世","我為了愛情放棄了一切"],auto:4500,au:"a"},
+{ps:["最好的閨蜜","竟聯合我的未婚夫","一起背叛我"],au:"b"},
+{ps:["一場意外","讓我重生了","回到命運的起點","——牡丹車站"]},
+{ps:["帶著前世的記憶","我決定","沿著鐵道查詢真相"],auto:6000},
+{ps:["揭開牡丹車站、三貂嶺、雙溪老街","背後的祕密","奪回屬於我的一切"],b:"開啟下一章"}];
+/* 依標點斷句，並依句尾標點決定停頓長短 */
+function mk(ps){var out=[];ps.forEach(function(t){var pc=[];
+(t.match(/[^。！？；]+[。！？；]*[」』]?/g)||[t]).forEach(function(x){
+if(x.length>18){var c="";(x.match(/[^，、]+[，、]?/g)||[x]).forEach(function(y){if(c&&(c+y).length>18){pc.push(c);c=y}else c+=y});if(c)pc.push(c)}else pc.push(x)});
+pc.forEach(function(x,i){var ch=x.replace(/[」』]/g,"").slice(-1),d=({"。":1500,"！":1300,"？":1800,"；":1200,"，":850,"、":750,"…":1900,"—":1900})[ch]||1000;
+d+=x.length*45;if(i==pc.length-1)d+=800;out.push({s:x,d:d})})});return out}
+function nx(){if(p<P.length-1)show(p+1)}
+function show(n){tk++;clearTimeout(tm);F.classList.add("off");setTimeout(function(){p=n;window.scrollTo(0,0);T(P[n]);F.classList.remove("off")},600)}
+function T(s){var L=mk(s.ps),my=tk;
+F.innerHTML='<div class="tx'+(s.ttl?" ttl":"")+'" id="tx">'+L.map(function(l){return '<span class="ln">'+l.s+"</span>"}).join("")+"</div>"+(s.auto?"":'<div class="dock"><button class="go" id="go" onclick="this.disabled=true;nx()">◎'+(s.b||"下一頁")+"</button></div>");
+var E=F.querySelectorAll(".ln");
+if(s.au&&AU[s.au])try{new Audio(AU[s.au]).play().catch(function(){})}catch(e){}
+function btn(){var g=document.getElementById("go");if(g)g.classList.add("show")}
+function run(i){if(my!=tk)return;if(i>=E.length){tm=s.auto?setTimeout(function(){if(my==tk)show(p+1)},s.auto):setTimeout(btn,700);return}E[i].classList.add("on");tm=setTimeout(function(){run(i+1)},L[i].d)}
+if(!s.auto)document.getElementById("tx").onclick=function(){clearTimeout(tm);E.forEach(function(e){e.classList.add("on")});setTimeout(btn,500)};
+run(0)}
+show(0);
+</script></body></html>
